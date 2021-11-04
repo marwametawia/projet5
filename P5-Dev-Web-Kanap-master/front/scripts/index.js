@@ -1,12 +1,6 @@
-let tab = [{}]
- tab = [{num1:1,
-    num2:2}];
-console.log(tab.length);
-
-console.log(tab)
 
 
-const fetchProduct = () => {
+const fetchProducts = () => {
     return fetch("http://localhost:3000/api/products")
         .then((res) => res.json())
         .then((resApi) => {
@@ -16,8 +10,8 @@ const fetchProduct = () => {
         .catch((error) => console.error(error));
 };
 
-const productDisplay = async () => {
-    const products = await fetchProduct();
+const productsDisplay = async () => {
+    const products = await fetchProducts();
 
     const template = document.querySelector("#items-template");
     console.log(template);
@@ -38,4 +32,4 @@ const productDisplay = async () => {
     });
 };
 
-productDisplay();
+productsDisplay();
