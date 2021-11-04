@@ -1,43 +1,40 @@
 export const setProductQuantity = async (productToSet, quantityToSet) => {
-    const cartsProduct= await getCart();
+    const cartsProduct = await getCart();
     const foundProduct = cartsProduct.find(
-        (p) => p.product.id === productToSet.id && p.product.color === productToSet.color
+        (p) =>
+            p.product.id === productToSet.id &&
+            p.product.color === productToSet.color
     );
 
-    if ((foundProduct === undefined) &&(quantityToSet>0)) {
+    if (foundProduct === undefined && quantityToSet > 0) {
         cartsProduct.push({
             quantity: quantityToSet,
-            product: productToSet
-
+            product: productToSet,
         });
         saveCart(cartsProduct);
-        return ;
+        return;
     }
 
-    foundProduct.quantity= quantityToSet;
+    foundProduct.quantity = quantityToSet;
     saveCart(cartsProduct);
-
 };
 
 export const saveCart = (cartsProduct) => {
-    localStorage.setItem("cart",JSON.stringify(cartsProduct));
-}
+    localStorage.setItem("cart", JSON.stringify(cartsProduct));
+};
 
 export const getCart = () => {
-  return JSON.parse( localStorage.getItem("cart"));
-}
+    return JSON.parse(localStorage.getItem("cart"));
+};
 
-
-
-
-const cartDisplay =  async () => {
-    const basket = await getCart(); 
+const cartDisplay = async () => {
+    const basket = await getCart();
     const templateItems = document.querySelector("#cart__items-template");
     console.log(templateItems);
     const containerItems = document.getElementById("cart_items");
     console.log(containerItems);
-    const totalQuantityDoc= document.querySelector("#totalQuantity");
-    const totalPriceDoc= document.querySelector("totalPrice")
+    const totalQuantityDoc = document.querySelector("#totalQuantity");
+    const totalPriceDoc = document.querySelector("totalPrice");
 
     const totalQuantity = 0;
     const totalPrice = 0;
@@ -47,45 +44,43 @@ const cartDisplay =  async () => {
         clone.querySelector(".cart__item").dataset.id === `${product._id}`;
         clone.querySelector("img").setAttribute("alt", `${product.altTxt}`);
         clone.querySelector("img").setAttribute("src", `${product.imageUrl}`);
-        clone.querySelector(".cart__item__content__titlePrice").firstChild.textContent = `${product.name}`;
-        clone.querySelector(".cart__item__content__titlePrice").lastChild.textContent = `${product.price}`;
-        clone.querySelector(".cart__item__content__settings__quantity").textContent += `${product.quantity}`;
+        clone.querySelector(
+            ".cart__item__content__titlePrice"
+        ).firstChild.textContent = `${product.name}`;
+        clone.querySelector(
+            ".cart__item__content__titlePrice"
+        ).lastChild.textContent = `${product.price}`;
+        clone.querySelector(
+            ".cart__item__content__settings__quantity"
+        ).textContent += `${product.quantity}`;
         totalQuantity += product.quantity;
-        totalPrice += (product.quantity) * (product.price)
+        totalPrice += product.quantity * product.price;
         containerItems.appendChild(clone);
-        totalPriceDoc.textContent= totalPrice;
-        totalQuantityDoc.textContent= totalQuantity;
+        totalPriceDoc.textContent = totalPrice;
+        totalQuantityDoc.textContent = totalQuantity;
     });
-    
-
-    
 };
 
+const getFormValues = async () => {
+    const copyOfCartLS = await getCart();
+    let inputName = document.querySelector("#name");
+    let inputLastName = document.querySelector("#lastname");
+    let inputAdress = document.querySelector("#adress");
+    let inputCity = document.querySelector("#city");
+    let inputMail = document.querySelector("#mail");
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    submit.addEventListener("click", () => {
+        const productsOnTheBasket = [];
+        productsOnTheBasket.push(copyOfCartLS);
+        const order = {
+            customer: {
+                firstName: inputName.value,
+                lastName: inputLastName.value,
+                city: inputCity.value,
+                address: inputAdress.value,
+                email: inputMail.value,
+            },
+            products: productsOnTheBasket,
+        };
+    });
+};
