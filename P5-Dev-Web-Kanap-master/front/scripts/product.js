@@ -19,7 +19,7 @@ const fetchProduct = () => {
 const productDisplay = async () => {
     const product = await fetchProduct();
     const template = document.querySelector("#item-template");
-    const container = document.getElementsByClassName("item");
+    const container = document.querySelector(".item");
     const clone = document.importNode(template.content, true);
 
     clone.querySelector("img").setAttribute("alt", `${product.altTxt}`);
@@ -29,17 +29,17 @@ const productDisplay = async () => {
     clone.querySelector("#description").textContent = `${product.description}`;
 
     for (let i = 0; i < product.colors.length; i++) {
-        clone
-            .querySelector("select")
-            .setAttribute("name", `${product.colors[i]}`);
-        clone.querySelector("#colors").value += product.colors[i];
+        const option = document.createElement("option");
+        option.setAttribute("value", product.colors[i]);
+        option.textContent = product.colors[i];
+        clone.querySelector("#colors").append(option);
     }
 
     container.appendChild(clone);
+    const button = document.getElementById("addToCart");
+    button.addEventListener("click", () => {
+        const qty = document.getElementById("quantity").value;
+        setProductQuantity(product, qty);
+    });
 };
-
-const button = document.getElementById("addToCart");
-button.addEventListener("click", () => {
-    const qty = document.getElementById("quantity").value;
-    setProductQuantity(product, qty);
-});
+productDisplay();

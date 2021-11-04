@@ -24,6 +24,9 @@ export const saveCart = (cartsProduct) => {
 };
 
 export const getCart = () => {
+    if (localStorage.getItem("cart") === null) {
+        return [];
+    }
     return JSON.parse(localStorage.getItem("cart"));
 };
 
@@ -31,30 +34,30 @@ const cartDisplay = async () => {
     const basket = await getCart();
     const templateItems = document.querySelector("#cart__items-template");
     console.log(templateItems);
-    const containerItems = document.getElementById("cart_items");
+    const containerItems = document.getElementById("cart__items");
     console.log(containerItems);
     const totalQuantityDoc = document.querySelector("#totalQuantity");
-    const totalPriceDoc = document.querySelector("totalPrice");
+    const totalPriceDoc = document.querySelector("#totalPrice");
 
-    const totalQuantity = 0;
-    const totalPrice = 0;
+    let totalQuantity = 0;
+    let totalPrice = 0;
 
-    basket.forEach((product) => {
+    basket.forEach(({ product, quantity }) => {
         const clone = document.importNode(templateItems.content, true);
         clone.querySelector(".cart__item").dataset.id === `${product._id}`;
         clone.querySelector("img").setAttribute("alt", `${product.altTxt}`);
         clone.querySelector("img").setAttribute("src", `${product.imageUrl}`);
         clone.querySelector(
-            ".cart__item__content__titlePrice"
-        ).firstChild.textContent = `${product.name}`;
+            ".cart__item__content__titlePrice p"
+        ).textContent = `${product.name}`;
         clone.querySelector(
-            ".cart__item__content__titlePrice"
-        ).lastChild.textContent = `${product.price}`;
-        clone.querySelector(
-            ".cart__item__content__settings__quantity"
-        ).textContent += `${product.quantity}`;
-        totalQuantity += product.quantity;
-        totalPrice += product.quantity * product.price;
+            ".cart__item__content__titlePrice h2"
+        ).textContent = `${product.price}€`;
+        clone.querySelector(".cart__item__content__settings__quantity").value =
+            quantity;
+
+        totalQuantity += quantity;
+        totalPrice += quantity * product.price;
         containerItems.appendChild(clone);
         totalPriceDoc.textContent = totalPrice;
         totalQuantityDoc.textContent = totalQuantity;
@@ -84,3 +87,5 @@ const getFormValues = async () => {
         };
     });
 };
+
+cartDisplay();
