@@ -16,7 +16,7 @@ const fetchProduct = () => {
         })
         .catch((error) => console.error(error));
 };
-const productDisplay = async () => {
+const displayProduct = async () => {
     const product = await fetchProduct();
     const template = document.querySelector("#item-template");
     const container = document.querySelector(".item");
@@ -42,4 +42,4 @@ const productDisplay = async () => {
         setProductQuantity(product, qty);
     });
 };
-productDisplay();
+displayProduct();

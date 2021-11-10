@@ -6,6 +6,10 @@ export const setProductQuantity = async (productToSet, quantityToSet) => {
             p.product.color === productToSet.color
     );
 
+    if (quantityToSet === 0) {
+        cartsProduct.splice(cartsProduct.indexOf(foundProduct), 1);
+    }
+
     if (foundProduct === undefined && quantityToSet > 0) {
         cartsProduct.push({
             quantity: quantityToSet,
@@ -30,19 +34,20 @@ export const getCart = () => {
     return JSON.parse(localStorage.getItem("cart"));
 };
 
-const cartDisplay = async () => {
-    const basket = await getCart();
+const displayCart = async () => {
+    const cart = await getCart();
     const templateItems = document.querySelector("#cart__items-template");
     console.log(templateItems);
     const containerItems = document.getElementById("cart__items");
     console.log(containerItems);
     const totalQuantityDoc = document.querySelector("#totalQuantity");
     const totalPriceDoc = document.querySelector("#totalPrice");
+    const removeProduct = document.querySelector(".deleteItem");
 
     let totalQuantity = 0;
     let totalPrice = 0;
 
-    basket.forEach(({ product, quantity }) => {
+    cart.forEach(({ product, quantity }) => {
         const clone = document.importNode(templateItems.content, true);
         clone.querySelector(".cart__item").dataset.id === `${product._id}`;
         clone.querySelector("img").setAttribute("alt", `${product.altTxt}`);
@@ -53,8 +58,10 @@ const cartDisplay = async () => {
         clone.querySelector(
             ".cart__item__content__titlePrice h2"
         ).textContent = `${product.price}€`;
-        clone.querySelector(".cart__item__content__settings__quantity").value =
-            quantity;
+        clone.querySelector(".itemQuantity").value = quantity;
+        removeProduct.addEventListener("click", () => {
+            setProductQuantity(product, 0);
+        });
 
         totalQuantity += quantity;
         totalPrice += quantity * product.price;
@@ -65,16 +72,16 @@ const cartDisplay = async () => {
 };
 
 const getFormValues = async () => {
+    const submitButton = document.querySelector(".cart__order__form__submit");
     const copyOfCartLS = await getCart();
     let inputName = document.querySelector("#name");
     let inputLastName = document.querySelector("#lastname");
     let inputAdress = document.querySelector("#adress");
     let inputCity = document.querySelector("#city");
     let inputMail = document.querySelector("#mail");
-
-    submit.addEventListener("click", () => {
-        const productsOnTheBasket = [];
-        productsOnTheBasket.push(copyOfCartLS);
+    submitButton.addEventListener("click", () => {
+        const productsOnCart = [];
+        productsOnCart.push(copyOfCartLS);
         const order = {
             customer: {
                 firstName: inputName.value,
@@ -83,9 +90,15 @@ const getFormValues = async () => {
                 address: inputAdress.value,
                 email: inputMail.value,
             },
-            products: productsOnTheBasket,
+            products: productsOnCart,
         };
     });
+    return order;
 };
 
-cartDisplay();
+const postOrder = () => {
+  const form = document.querySelector(".cart__order__form");
+  
+
+};
+displayCart();
