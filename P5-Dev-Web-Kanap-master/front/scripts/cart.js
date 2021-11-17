@@ -1,38 +1,6 @@
-export const setProductQuantity = async (productToSet, quantityToSet) => {
-    const cartsProduct = await getCart();
-    const foundProduct = cartsProduct.find(
-        (p) =>
-            p.product.id === productToSet.id &&
-            p.product.color === productToSet.color
-    );
-
-    if (quantityToSet === 0) {
-        cartsProduct.splice(cartsProduct.indexOf(foundProduct), 1);
-    }
-
-    if (foundProduct === undefined && quantityToSet > 0) {
-        cartsProduct.push({
-            quantity: quantityToSet,
-            product: productToSet,
-        });
-        saveCart(cartsProduct);
-        return;
-    }
-
-    foundProduct.quantity = quantityToSet;
-    saveCart(cartsProduct);
-};
-
-export const saveCart = (cartsProduct) => {
-    localStorage.setItem("cart", JSON.stringify(cartsProduct));
-};
-
-export const getCart = () => {
-    if (localStorage.getItem("cart") === null) {
-        return [];
-    }
-    return JSON.parse(localStorage.getItem("cart"));
-};
+import { setProductQuantity } from "./utils.js";
+import { saveCart} from "./utils.js";
+import { getCart } from "./utils.js";
 
 const displayCart = async () => {
     const cart = await getCart();
@@ -40,6 +8,10 @@ const displayCart = async () => {
     console.log(templateItems);
     const containerItems = document.getElementById("cart__items");
     console.log(containerItems);
+    let changeQuantity = document.querySelector(".itemQuantity");
+    let newQuantity = document.querySelector(
+        ".cart__item__content__settings__quantity p"
+    );
     const totalQuantityDoc = document.querySelector("#totalQuantity");
     const totalPriceDoc = document.querySelector("#totalPrice");
     const removeProduct = document.querySelector(".deleteItem");
@@ -58,10 +30,14 @@ const displayCart = async () => {
         clone.querySelector(
             ".cart__item__content__titlePrice h2"
         ).textContent = `${product.price}€`;
-        clone.querySelector(".itemQuantity").value = quantity;
-        removeProduct.addEventListener("click", () => {
-            setProductQuantity(product, 0);
+        changeQuantity.addEventListener("change", () => {
+            newQuantity.textContent = this.value;
+            setProductQuantity(product, product.color, newQuantity.value);
         });
+        document.querySelector(".deleteItem").addEventListener("click", () => {
+            setProductQuantity(product, product.color, 0);
+        });
+        clone.querySelector(".itemQuantity").value = quantity;
 
         totalQuantity += quantity;
         totalPrice += quantity * product.price;
@@ -72,33 +48,91 @@ const displayCart = async () => {
 };
 
 const getFormValues = async () => {
-    const submitButton = document.querySelector(".cart__order__form__submit");
     const copyOfCartLS = await getCart();
-    let inputName = document.querySelector("#name");
-    let inputLastName = document.querySelector("#lastname");
+    let inputName = document.querySelector("#firstName");
+    let inputLastName = document.querySelector("#lastName");
     let inputAdress = document.querySelector("#adress");
     let inputCity = document.querySelector("#city");
     let inputMail = document.querySelector("#mail");
-    submitButton.addEventListener("click", () => {
-        const productsOnCart = [];
-        productsOnCart.push(copyOfCartLS);
-        const order = {
-            customer: {
-                firstName: inputName.value,
-                lastName: inputLastName.value,
-                city: inputCity.value,
-                address: inputAdress.value,
-                email: inputMail.value,
-            },
-            products: productsOnCart,
-        };
-    });
+    let errorfirstName= document.querySelector("#firstNameErrorMsg");
+    let errorLastName = document.querySelector("#lastNameErrorMsg");
+    let errorAdress = document.querySelector("#addressErrorMsg");
+    let errorCity= document.querySelector("#cityErrorMsg");
+    let errorMail = document.querySelector("#emailErrorMsg");
+    let regexMail =
+        /^(([^<>()[]\.,;:s@]+(.[^<>()[]\.,;:s@]+)*)|(.+))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$/;
+
+    if (!inputName.value){
+            errorfirstName.textContent= "Veuillez renseigner votre prénom";
+        }
+
+    if (!inputLastName.value) {
+        errorLastName.textContent= "Veuillez renseigner votre nom";
+    } 
+    if(!inputAdress.value ){
+        errorAdress.textContent= "Veuillez renseigner votre adresse"
+    }
+    
+    if (!inputCity.value){
+        errorCity.textContent= "Veuillez renseigner votre ville"
+    }
+    
+    
+     if (!inputMail.value)
+    {
+        errorMail.textContent= "Veuillez renseigner votre adresse mail"
+    }
+
+    if (!regexMail.test(inputMail.value)) {
+        document.querySelector("#emailErrorMsg").textContent = "L'adresse mail n'est pas valide";
+        document.querySelector("#emailErrorMsg").style.color = red;
+    }
+
+    const productsOnCart = [];
+    productsOnCart.push(copyOfCartLS);
+    const order = {
+        customer: {
+            firstName: inputName.value,
+            lastName: inputLastName.value,
+            city: inputCity.value,
+            address: inputAdress.value,
+            email: inputMail.value,
+        },
+        products: productsOnCart,
+    };
+
     return order;
 };
 
-const postOrder = () => {
-  const form = document.querySelector(".cart__order__form");
-  
-
+const postOrder = async () => {
+    const data = await getFormValues();
+    const response = await fetch('http://localhost:3000/api/order', 
+            {
+            method: 'POST',
+            headers: 
+            {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        let  order = null;
+    if (response.status === 201) 
+    {
+        order = await response.json()
+        console.log("Commande passée avec succès")
+    } 
+    return order;
 };
+
+const submitOrder = async () =>{
+    const order = await postOrder();
+    const submit = document.querySelector("#id");
+    submit.addEventListener('click', () => {
+        window.location.href= "../html/confirmation.html?orderId"=order.orderId;
+        localStorage.saveCart('cartsProduct', null);
+    })
+
+}
+
 displayCart();
+submitOrder();
