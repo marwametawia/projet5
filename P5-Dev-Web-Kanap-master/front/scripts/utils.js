@@ -6,7 +6,7 @@ export const setProductQuantity = async (
     const foundProduct = cartsProduct.find(
         (p) =>
             p.product._id === productToSet._id &&
-            p.product.color === colorSelected
+            p.color === colorSelected
     );
 
     if (quantityToSet === 0) {

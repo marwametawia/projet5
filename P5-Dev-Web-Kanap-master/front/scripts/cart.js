@@ -1,5 +1,5 @@
 import { setProductQuantity } from "./utils.js";
-import { saveCart} from "./utils.js";
+import { saveCart } from "./utils.js";
 import { getCart } from "./utils.js";
 
 const displayCart = async () => {
@@ -8,19 +8,18 @@ const displayCart = async () => {
     console.log(templateItems);
     const containerItems = document.getElementById("cart__items");
     console.log(containerItems);
-    let changeQuantity = document.querySelector(".itemQuantity");
-    let newQuantity = document.querySelector(
-        ".cart__item__content__settings__quantity p"
-    );
-    const totalQuantityDoc = document.querySelector("#totalQuantity");
-    const totalPriceDoc = document.querySelector("#totalPrice");
-    const removeProduct = document.querySelector(".deleteItem");
 
     let totalQuantity = 0;
     let totalPrice = 0;
 
     cart.forEach(({ product, quantity }) => {
         const clone = document.importNode(templateItems.content, true);
+        let changeQuantity = document.querySelector(".itemQuantity");
+        let newQuantity = document.querySelector(".cart__item__content__settings__quantity p");
+        const totalQuantityDoc = document.querySelector("#totalQuantity");
+        const totalPriceDoc = document.querySelector("#totalPrice");
+        const removeProduct = document.querySelector(".deleteItem");
+
         clone.querySelector(".cart__item").dataset.id === `${product._id}`;
         clone.querySelector("img").setAttribute("alt", `${product.altTxt}`);
         clone.querySelector("img").setAttribute("src", `${product.imageUrl}`);
@@ -30,12 +29,12 @@ const displayCart = async () => {
         clone.querySelector(
             ".cart__item__content__titlePrice h2"
         ).textContent = `${product.price}€`;
-        changeQuantity.addEventListener("change", () => {
-            newQuantity.textContent = this.value;
-            setProductQuantity(product, product.color, newQuantity.value);
+        changeQuantity.addEventListener("change", (e) => {
+            newQuantity.textContent = e.target.value;
+            setProductQuantity(product, product.color, newQuantity);
         });
         document.querySelector(".deleteItem").addEventListener("click", () => {
-            setProductQuantity(product, product.color, 0);
+            setProductQuantity(product, 0, product.color);
         });
         clone.querySelector(".itemQuantity").value = quantity;
 
@@ -54,37 +53,36 @@ const getFormValues = async () => {
     let inputAdress = document.querySelector("#adress");
     let inputCity = document.querySelector("#city");
     let inputMail = document.querySelector("#mail");
-    let errorfirstName= document.querySelector("#firstNameErrorMsg");
+    let errorfirstName = document.querySelector("#firstNameErrorMsg");
     let errorLastName = document.querySelector("#lastNameErrorMsg");
     let errorAdress = document.querySelector("#addressErrorMsg");
-    let errorCity= document.querySelector("#cityErrorMsg");
+    let errorCity = document.querySelector("#cityErrorMsg");
     let errorMail = document.querySelector("#emailErrorMsg");
     let regexMail =
         /^(([^<>()[]\.,;:s@]+(.[^<>()[]\.,;:s@]+)*)|(.+))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$/;
 
-    if (!inputName.value){
-            errorfirstName.textContent= "Veuillez renseigner votre prénom";
-        }
+    if (!inputName.value) {
+        errorfirstName.textContent = "Veuillez renseigner votre prénom";
+    }
 
     if (!inputLastName.value) {
-        errorLastName.textContent= "Veuillez renseigner votre nom";
-    } 
-    if(!inputAdress.value ){
-        errorAdress.textContent= "Veuillez renseigner votre adresse"
+        errorLastName.textContent = "Veuillez renseigner votre nom";
     }
-    
-    if (!inputCity.value){
-        errorCity.textContent= "Veuillez renseigner votre ville"
+    if (!inputAdress.value) {
+        errorAdress.textContent = "Veuillez renseigner votre adresse";
     }
-    
-    
-     if (!inputMail.value)
-    {
-        errorMail.textContent= "Veuillez renseigner votre adresse mail"
+
+    if (!inputCity.value) {
+        errorCity.textContent = "Veuillez renseigner votre ville";
+    }
+
+    if (!inputMail.value) {
+        errorMail.textContent = "Veuillez renseigner votre adresse mail";
     }
 
     if (!regexMail.test(inputMail.value)) {
-        document.querySelector("#emailErrorMsg").textContent = "L'adresse mail n'est pas valide";
+        document.querySelector("#emailErrorMsg").textContent =
+            "L'adresse mail n'est pas valide";
         document.querySelector("#emailErrorMsg").style.color = red;
     }
 
@@ -106,39 +104,20 @@ const getFormValues = async () => {
 
 const postOrder = async () => {
     const data = await getFormValues();
-    let  order = null;
-    const response = await fetch('http://localhost:3000/api/order', 
-            {
-            method: 'POST',
-            headers: 
-            {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-        
-    if (response.status === 201) 
-    {
-        order = await response.json()
-        console.log("Commande passée avec succès")
-        return order;}
-
-    else {
-    response.catch((error) => console.error(error));
-    return order;
-
-}}
-
-const submitOrder = async () =>{
-    const order = await postOrder();
-    const submit = document.querySelector("#id");
-    if (!(order === null)){
-    submit.addEventListener('click', () => {
-        window.location.href= "../html/confirmation.html?orderId"=order.orderId;
-        localStorage.saveCart('cartsProduct', null);
-    })}
-
-}
+    const response = await fetch("http://localhost:3000/api/order", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    });
+    return await response.json();
+};
 
 displayCart();
-submitOrder();
+
+document.querySelector("#id").addEventListener("click", () => {
+    const order = postOrder();
+    saveCart(null);
+    window.location.href = "../html/confirmation.html?orderId=" + order.orderId;
+});

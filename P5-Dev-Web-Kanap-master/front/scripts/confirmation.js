@@ -6,4 +6,4 @@ const orderId = query.get("orderId");
 const template = document.querySelector("#confirmationTemplate");
 const container = document.querySelector(".confirmation");
 const clone = document.importNode(template.content, true);
-clone.querySelector("#spanId").textContent = orderID;
+clone.querySelector("#spanId").textContent = orderId;
