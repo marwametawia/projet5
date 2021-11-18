@@ -106,6 +106,7 @@ const getFormValues = async () => {
 
 const postOrder = async () => {
     const data = await getFormValues();
+    let  order = null;
     const response = await fetch('http://localhost:3000/api/order', 
             {
             method: 'POST',
@@ -115,22 +116,27 @@ const postOrder = async () => {
             },
             body: JSON.stringify(data)
         });
-        let  order = null;
+        
     if (response.status === 201) 
     {
         order = await response.json()
         console.log("Commande passée avec succès")
-    } 
+        return order;}
+
+    else {
+    response.catch((error) => console.error(error));
     return order;
-};
+
+}}
 
 const submitOrder = async () =>{
     const order = await postOrder();
     const submit = document.querySelector("#id");
+    if (!(order === null)){
     submit.addEventListener('click', () => {
         window.location.href= "../html/confirmation.html?orderId"=order.orderId;
         localStorage.saveCart('cartsProduct', null);
-    })
+    })}
 
 }
 
