@@ -4,9 +4,9 @@ export const setProductQuantity = async (
     colorSelected) => {
     const cartsProduct = await getCart();
     const foundProduct = cartsProduct.find(
-        (p) =>
-            p.product._id === productToSet._id &&
-            p.color === colorSelected
+        (productToFind) =>
+            productToFind.product._id === productToSet._id &&
+            productToFind.color === colorSelected
     );
 
     if (quantityToSet === 0) {
@@ -29,7 +29,7 @@ export const setProductQuantity = async (
         return;
     }
 
-    foundProduct.quantity = quantityToSet;
+    foundProduct.quantity = Number(quantityToSet);
     saveCart(cartsProduct);
 };
 

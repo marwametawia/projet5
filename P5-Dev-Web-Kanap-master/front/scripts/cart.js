@@ -14,11 +14,11 @@ const displayCart = async () => {
 
     cart.forEach(({ product, quantity }) => {
         const clone = document.importNode(templateItems.content, true);
-        let changeQuantity = document.querySelector(".itemQuantity");
-        let newQuantity = document.querySelector(".cart__item__content__settings__quantity p");
+        let changeQuantity = clone.querySelector(".itemQuantity");
+        let newQuantity = clone.querySelector(".cart__item__content__settings__quantity p");
         const totalQuantityDoc = document.querySelector("#totalQuantity");
         const totalPriceDoc = document.querySelector("#totalPrice");
-        const removeProduct = document.querySelector(".deleteItem");
+        const removeProduct = clone.querySelector(".deleteItem");
 
         clone.querySelector(".cart__item").dataset.id === `${product._id}`;
         clone.querySelector("img").setAttribute("alt", `${product.altTxt}`);
@@ -32,8 +32,7 @@ const displayCart = async () => {
         changeQuantity.addEventListener("change", (e) => {
             newQuantity.textContent = e.target.value;
             setProductQuantity(product, product.color, newQuantity);
-        });
-        document.querySelector(".deleteItem").addEventListener("click", () => {
+        });    clone.querySelector(".deleteItem").addEventListener("click", () => {
             setProductQuantity(product, 0, product.color);
         });
         clone.querySelector(".itemQuantity").value = quantity;
@@ -116,7 +115,7 @@ const postOrder = async () => {
 
 displayCart();
 
-document.querySelector("#id").addEventListener("click", () => {
+document.querySelector("#order").addEventListener("click", () => {
     const order = postOrder();
     saveCart(null);
     window.location.href = "../html/confirmation.html?orderId=" + order.orderId;

@@ -1,5 +1,5 @@
 import { setProductQuantity } from "./utils.js";
-import { saveCart} from "./utils.js";
+import { saveCart } from "./utils.js";
 import { getCart } from "./utils.js";
 
 const queryString = window.location.search;
@@ -37,12 +37,13 @@ const displayProduct = async () => {
 
     container.appendChild(clone);
     const button = document.getElementById("addToCart");
-    button.addEventListener('click', () => {
+    button.addEventListener("click", () => {
+        console.log("on ajoute un produit");
         let qty = document.getElementById("quantity").value;
-        let color = document.querySelector("#colors").value; 
-        console.log(color);
-
-        setProductQuantity(product, color, qty);
+        let color = document.querySelector("#colors").value;
+        console.log("produit ajouté");
+         console.log(color);
+         setProductQuantity(product, color, qty);
     });
 };
 displayProduct();
