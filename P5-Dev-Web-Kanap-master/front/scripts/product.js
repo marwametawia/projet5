@@ -43,7 +43,7 @@ const displayProduct = async () => {
         let color = document.querySelector("#colors").value;
         console.log("produit ajouté");
          console.log(color);
-         setProductQuantity(product, color, qty);
+         setProductQuantity(product, qty, color);
     });
 };
 displayProduct();
