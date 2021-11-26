@@ -9,7 +9,7 @@ export const setProductQuantity = async (
             productToFind.color === colorSelected
     );
 
-    if (quantityToSet === 0) {
+    if (quantityToSet === 0 && foundProduct!==undefined) {
         cartsProduct.splice(cartsProduct.indexOf(foundProduct), 1);
         saveCart(cartsProduct);
         return cartsProduct;

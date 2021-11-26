@@ -12,10 +12,12 @@ const displayCart = async () => {
     let totalQuantity = 0;
     let totalPrice = 0;
 
-    cart.forEach(({ product, quantity }) => {
+    cart.forEach(({ product, quantity, color }) => {
         const clone = document.importNode(templateItems.content, true);
         let changeQuantity = clone.querySelector(".itemQuantity");
-        let newQuantity = clone.querySelector(".cart__item__content__settings__quantity p");
+        let newQuantity = clone.querySelector(
+            ".cart__item__content__settings__quantity p"
+        );
         const totalQuantityDoc = document.querySelector("#totalQuantity");
         const totalPriceDoc = document.querySelector("#totalPrice");
         const removeProduct = clone.querySelector(".deleteItem");
@@ -31,9 +33,10 @@ const displayCart = async () => {
         ).textContent = `${product.price}€`;
         changeQuantity.addEventListener("change", (e) => {
             newQuantity.textContent = e.target.value;
-            setProductQuantity(product, product.color, newQuantity);
-        });    clone.querySelector(".deleteItem").addEventListener("click", () => {
-            setProductQuantity(product, 0, product.color);
+            setProductQuantity(product, parseInt(e.target.value), color);
+        });
+        clone.querySelector(".deleteItem").addEventListener("click", () => {
+            setProductQuantity(product, 0, color);
         });
         clone.querySelector(".itemQuantity").value = quantity;
 

@@ -39,11 +39,11 @@ const displayProduct = async () => {
     const button = document.getElementById("addToCart");
     button.addEventListener("click", () => {
         console.log("on ajoute un produit");
-        let qty = document.getElementById("quantity").value;
+        let qty = parseInt(document.getElementById("quantity").value);
         let color = document.querySelector("#colors").value;
         console.log("produit ajouté");
-         console.log(color);
-         setProductQuantity(product, qty, color);
+        console.log(color);
+        setProductQuantity(product, qty, color);
     });
 };
 displayProduct();
