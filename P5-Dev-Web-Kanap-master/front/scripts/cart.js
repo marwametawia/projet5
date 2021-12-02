@@ -52,9 +52,9 @@ const getFormValues = async () => {
     const copyOfCartLS = await getCart();
     let inputName = document.querySelector("#firstName");
     let inputLastName = document.querySelector("#lastName");
-    let inputAdress = document.querySelector("#adress");
+    let inputAdress = document.querySelector("#address");
     let inputCity = document.querySelector("#city");
-    let inputMail = document.querySelector("#mail");
+    let inputMail = document.querySelector("#email");
     let errorfirstName = document.querySelector("#firstNameErrorMsg");
     let errorLastName = document.querySelector("#lastNameErrorMsg");
     let errorAdress = document.querySelector("#addressErrorMsg");
@@ -106,7 +106,7 @@ const getFormValues = async () => {
 
 const postOrder = async () => {
     const data = await getFormValues();
-    const response = await fetch("http://localhost:3000/api/order", {
+    const response = await fetch("http://localhost:3000/api/products/order", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -118,8 +118,10 @@ const postOrder = async () => {
 
 displayCart();
 
-document.querySelector("#order").addEventListener("click", () => {
-    const order = postOrder();
+document.querySelector("#order").addEventListener("click", async (e) => {
+    e.preventDefault(); //empeche de rafraichir la page
+    const order = await postOrder();
+    console.log(order)
     saveCart(null);
-    window.location.href = "../html/confirmation.html?orderId=" + order.orderId;
+    window.location.href = "../html/confirmation.html?orderId="+order.orderId;
 });

@@ -37,8 +37,9 @@ export const saveCart = (cartsProduct) => {
     localStorage.setItem("cart", JSON.stringify(cartsProduct));
 };
 
-export const getCart = () => {
-    if (localStorage.getItem("cart") === null) {
+export const getCart = async () => {
+    const cart= JSON.parse(localStorage.getItem("cart"))
+    if (!cart) {
         return [];
     }
     return JSON.parse(localStorage.getItem("cart"));
