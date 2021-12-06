@@ -37,13 +37,19 @@ const displayProduct = async () => {
 
     container.appendChild(clone);
     const button = document.getElementById("addToCart");
-    button.addEventListener("click", () => {
+    button.addEventListener("click", (e) => {
         console.log("on ajoute un produit");
         let qty = parseInt(document.getElementById("quantity").value);
         let color = document.querySelector("#colors").value;
         console.log("produit ajouté");
         console.log(color);
+        if (!color ){
+          alert ("Veuillez selectionner une couleur")
+          
+       }
+        
         setProductQuantity(product, qty, color);
+        
     });
 };
 displayProduct();

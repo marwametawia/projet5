@@ -2,6 +2,9 @@ export const setProductQuantity = async (
     productToSet,
     quantityToSet,
     colorSelected) => {
+        if (!colorSelected || quantityToSet<0){
+            return
+        }
     const cartsProduct = await getCart();
     const foundProduct = cartsProduct.find(
         (productToFind) =>
@@ -28,16 +31,19 @@ export const setProductQuantity = async (
         saveCart(cartsProduct);
         return;
     }
+    if ((foundProduct.quantity += Number(quantityToSet)) <=100){;
 
-    foundProduct.quantity = Number(quantityToSet);
+    foundProduct.quantity += Number(quantityToSet);
     saveCart(cartsProduct);
+    return}
+    alert ("La quantité totale du produit ne peut excéder 100!");
 };
 
 export const saveCart = (cartsProduct) => {
     localStorage.setItem("cart", JSON.stringify(cartsProduct));
 };
 
-export const getCart = async () => {
+export const getCart = async() => {
     const cart= JSON.parse(localStorage.getItem("cart"))
     if (!cart) {
         return [];

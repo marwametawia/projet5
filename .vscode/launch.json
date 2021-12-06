@@ -1,0 +1,17 @@
+{
+    "configurations": [
+    {
+        "name": "Attach to Server",
+        "request": "attach",
+        "type": "janus",
+        "host": "localhost",
+        "debuggerPort": 8089,
+        "log": {
+            "fileName": "/vscode-janus-debug-attach.log",
+            "logLevel": {
+                "default": "Debug"
+            }
+        }
+    }
+    ]
+}
