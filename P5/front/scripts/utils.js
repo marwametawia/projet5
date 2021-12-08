@@ -1,10 +1,11 @@
 export const setProductQuantity = async (
     productToSet,
     quantityToSet,
-    colorSelected) => {
-        if (!colorSelected || quantityToSet<0){
-            return
-        }
+    colorSelected
+) => {
+    if (!colorSelected || quantityToSet < 0) {
+        return;
+    }
     const cartsProduct = await getCart();
     const foundProduct = cartsProduct.find(
         (productToFind) =>
@@ -12,7 +13,7 @@ export const setProductQuantity = async (
             productToFind.color === colorSelected
     );
 
-    if (quantityToSet === 0 && foundProduct!==undefined) {
+    if (quantityToSet === 0 && foundProduct !== undefined) {
         cartsProduct.splice(cartsProduct.indexOf(foundProduct), 1);
         saveCart(cartsProduct);
         return cartsProduct;
@@ -31,20 +32,23 @@ export const setProductQuantity = async (
         saveCart(cartsProduct);
         return;
     }
-    if ((foundProduct.quantity += Number(quantityToSet)) <=100){;
+    if (Number(quantityToSet) <= 100) {
+        foundProduct.quantity = Number(quantityToSet);
+        saveCart(cartsProduct);
+        return;
+    }
 
-    foundProduct.quantity += Number(quantityToSet);
-    saveCart(cartsProduct);
-    return}
-    alert ("La quantité totale du produit ne peut excéder 100!");
+    alert("La quantité totale du produit ne peut excéder 100!");
 };
 
 export const saveCart = (cartsProduct) => {
     localStorage.setItem("cart", JSON.stringify(cartsProduct));
 };
 
-export const getCart = async() => {
-    const cart= JSON.parse(localStorage.getItem("cart"))
+export const getCart = async () => {
+    const cartFromLocalStorage = localStorage.getItem("cart") || null;
+
+    const cart = JSON.parse(cartFromLocalStorage);
     if (!cart) {
         return [];
     }

@@ -37,19 +37,30 @@ const displayProduct = async () => {
 
     container.appendChild(clone);
     const button = document.getElementById("addToCart");
-    button.addEventListener("click", (e) => {
+    button.addEventListener("click", async (e) => {
         console.log("on ajoute un produit");
         let qty = parseInt(document.getElementById("quantity").value);
         let color = document.querySelector("#colors").value;
         console.log("produit ajouté");
         console.log(color);
-        if (!color ){
-          alert ("Veuillez selectionner une couleur")
-          
-       }
+        if (!color) {
+            alert("Veuillez selectionner une couleur");
+        }
+        const cartsProduct = await getCart();
+        let updatedQuantity = 0;
+        const foundProduct = cartsProduct.find(
+            (productToFind) =>
+                productToFind.product._id === product._id &&
+                productToFind.color === color
+        );
         
-        setProductQuantity(product, qty, color);
-        
+        if (!foundProduct) {
+            setProductQuantity(product, qty, color);
+            return;
+        }
+        updatedQuantity = foundProduct.quantity + qty;
+        console.log(updatedQuantity);
+        setProductQuantity(product, updatedQuantity, color);
     });
 };
 displayProduct();

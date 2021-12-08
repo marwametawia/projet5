@@ -8,12 +8,14 @@ const displayCart = async () => {
     console.log(templateItems);
     const containerItems = document.getElementById("cart__items");
     console.log(containerItems);
-
+    while (containerItems.firstChild) {
+        containerItems.firstChild.remove();
+    }
     cart.forEach(({ product, quantity, color }) => {
         const clone = document.importNode(templateItems.content, true);
         let changeQuantity = clone.querySelector(".itemQuantity");
 
-        clone.querySelector(".cart__item").dataset.id === `${product._id}`;
+        clone.querySelector(".cart__item").dataset.id = `${product._id}`;
         clone.querySelector("img").setAttribute("alt", `${product.altTxt}`);
         clone.querySelector("img").setAttribute("src", `${product.imageUrl}`);
         clone.querySelector(".cart__item__content__titlePrice p").textContent =
@@ -26,13 +28,16 @@ const displayCart = async () => {
                 alert("La quantité totale du produit ne peut excéder 100!");
                 return;
             }
-            await setProductQuantity(product, 0, color);
+            //await setProductQuantity(product, 0, color);
             await setProductQuantity(product, parseInt(e.target.value), color);
             await displayCartBottomLine();
         });
-        clone.querySelector(".deleteItem").addEventListener("click", async () => {
+        clone
+            .querySelector(".deleteItem")
+            .addEventListener("click", async () => {
                 await setProductQuantity(product, 0, color);
                 await displayCartBottomLine();
+                displayCart();
             });
         clone.querySelector(".itemQuantity").value = quantity;
 
